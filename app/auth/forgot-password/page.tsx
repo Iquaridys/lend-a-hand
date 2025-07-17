@@ -24,6 +24,7 @@ import {
   Shield
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { resetPassword } from '@/lib/auth';
 
 const forgotPasswordSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -46,17 +47,13 @@ export default function ForgotPassword() {
     setIsLoading(true);
     
     try {
-      // Here you would typically integrate with Supabase auth
-      console.log('Password reset request:', data);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await resetPassword(data.email);
       
       setEmailSent(true);
       toast.success('Password reset email sent! Check your inbox.');
       
     } catch (error) {
-      toast.error('Failed to send reset email. Please try again.');
+      toast.error(error instanceof Error ? error.message : 'Failed to send reset email. Please try again.');
     } finally {
       setIsLoading(false);
     }

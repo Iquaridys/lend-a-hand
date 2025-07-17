@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,6 +32,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { signIn, signInWithProvider } from '@/lib/auth';
 
 const signInSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -44,6 +46,7 @@ export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
+  const router = useRouter();
 
   const form = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
@@ -58,19 +61,13 @@ export default function SignIn() {
     setIsLoading(true);
     
     try {
-      // Here you would typically integrate with Supabase auth
-      console.log('Sign in attempt:', data);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await signIn(data.email, data.password);
       
       toast.success('Welcome back! Redirecting to your dashboard...');
-      
-      // Redirect to dashboard after successful login
-      // In a real app, you'd use router.push('/dashboard')
+      router.push('/dashboard');
       
     } catch (error) {
-      toast.error('Invalid email or password. Please try again.');
+      toast.error(error instanceof Error ? error.message : 'Invalid email or password. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -80,16 +77,12 @@ export default function SignIn() {
     setSocialLoading(provider);
     
     try {
-      // Here you would integrate with Supabase social auth
-      console.log(`${provider} sign in attempt`);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await signInWithProvider(provider as 'google' | 'facebook');
       
       toast.success(`Signing in with ${provider}...`);
       
     } catch (error) {
-      toast.error(`Failed to sign in with ${provider}. Please try again.`);
+      toast.error(error instanceof Error ? error.message : `Failed to sign in with ${provider}. Please try again.`);
     } finally {
       setSocialLoading(null);
     }

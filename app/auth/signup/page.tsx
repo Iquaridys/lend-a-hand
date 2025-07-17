@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,6 +34,7 @@ import {
   CheckCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { signUp, signInWithProvider } from '@/lib/auth';
 
 const signUpSchema = z.object({
   fullName: z.string().min(2, 'Full name must be at least 2 characters'),
@@ -56,6 +58,7 @@ export default function SignUp() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
+  const router = useRouter();
 
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
@@ -74,18 +77,13 @@ export default function SignUp() {
     setIsLoading(true);
     
     try {
-      // Here you would typically integrate with Supabase auth
-      console.log('Sign up attempt:', data);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await signUp(data.email, data.password, data.fullName, data.location);
       
       toast.success('Account created successfully! Please check your email to verify your account.');
-      
-      // Redirect to verification page or dashboard
+      router.push('/auth/signin?message=Please check your email to verify your account');
       
     } catch (error) {
-      toast.error('Failed to create account. Please try again.');
+      toast.error(error instanceof Error ? error.message : 'Failed to create account. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -95,16 +93,12 @@ export default function SignUp() {
     setSocialLoading(provider);
     
     try {
-      // Here you would integrate with Supabase social auth
-      console.log(`${provider} sign up attempt`);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await signInWithProvider(provider as 'google' | 'facebook');
       
       toast.success(`Creating account with ${provider}...`);
       
     } catch (error) {
-      toast.error(`Failed to sign up with ${provider}. Please try again.`);
+      toast.error(error instanceof Error ? error.message : `Failed to sign up with ${provider}. Please try again.`);
     } finally {
       setSocialLoading(null);
     }
