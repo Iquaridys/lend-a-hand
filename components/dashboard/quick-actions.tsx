@@ -1,3 +1,5 @@
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, Search, MessageCircle, Users } from 'lucide-react';
@@ -72,5 +74,4 @@ export function QuickActions() {
       />
     </>
   );
-'use client';
 }
