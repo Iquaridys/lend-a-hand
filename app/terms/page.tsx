@@ -207,7 +207,7 @@ export default function Terms() {
             <CheckCircle className="h-4 w-4 text-blue-600" />
             <AlertDescription className="text-blue-800">
               <strong>By using Lend-a-Hand, you agree to these terms.</strong> Please read them carefully. 
-              If you don't agree with any part of these terms, please don't use our platform.
+              If you don't agree with any part of these terms, please don\'t use our platform.
             </AlertDescription>
           </Alert>
         </div>
