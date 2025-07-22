@@ -30,6 +30,10 @@ export function Navigation() {
     { href: '/profile', label: 'Profile', icon: User },
   ];
 
+  const publicNavItems = [
+    { href: '/listings', label: 'Browse', icon: Search },
+  ];
+
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -54,8 +58,8 @@ export function Navigation() {
           </Link>
 
           {/* Desktop Navigation */}
-          {isAuthenticated && <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
+          <div className="hidden md:flex items-center space-x-8">
+            {(isAuthenticated ? navItems : publicNavItems).map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -65,7 +69,7 @@ export function Navigation() {
                 <span>{item.label}</span>
               </Link>
             ))}
-          </div>}
+          </div>
 
           <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
@@ -131,7 +135,7 @@ export function Navigation() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[400px]">
               <div className="flex flex-col space-y-4 mt-8">
-                {isAuthenticated && navItems.map((item) => (
+                {(isAuthenticated ? navItems : publicNavItems).map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
